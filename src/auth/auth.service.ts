@@ -49,6 +49,8 @@ export class AuthService {
           id: existAccountUser.id,
           fullName: existAccountUser.fullName,
           email: existAccountUser.email,
+          avatar: existAccountUser.avatar,
+          phone: existAccountUser.phone,
         };
         return {
           code: 'success',

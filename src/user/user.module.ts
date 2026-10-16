@@ -6,6 +6,7 @@ import {
   AccountUser,
   AccountUserSchema,
 } from './schemas/account-user.schema.js';
+import { UserAuthGuard } from '../auth/guards/user-auth.guard.js';
 
 @Module({
   imports: [
@@ -14,7 +15,7 @@ import {
     ]),
   ],
   controllers: [UserController],
-  providers: [UserService],
-  exports: [UserService],
+  providers: [UserService, UserAuthGuard],
+  exports: [UserService, UserAuthGuard],
 })
 export class UserModule {}

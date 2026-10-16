@@ -100,4 +100,24 @@ export class UserService {
       message: 'Đăng nhập thành công !',
     };
   }
+
+  async Profile(req: any, file: Express.Multer.File | undefined, body: any) {
+    if (file && (file as any).path) {
+      body.avatar = (file as any).path;
+    } else {
+      delete body.avatar;
+    }
+
+    await this.accountUserModel.updateOne(
+      {
+        _id: req.account.id,
+      },
+      body,
+    );
+
+    return {
+      code: 'success',
+      message: 'Cập nhật thành công ',
+    };
+  }
 }
