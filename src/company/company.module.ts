@@ -6,6 +6,7 @@ import {
 } from './schemas/account-company.schema.js';
 import { CompanyController } from './company.controller.js';
 import { CompanyService } from './company.service.js';
+import { CompanyAuthGuard } from '../auth/guards/company-auth.guard.js';
 
 @Module({
   imports: [
@@ -14,7 +15,7 @@ import { CompanyService } from './company.service.js';
     ]),
   ],
   controllers: [CompanyController],
-  providers: [CompanyService],
-  exports: [MongooseModule, CompanyService],
+  providers: [CompanyService, CompanyAuthGuard],
+  exports: [MongooseModule, CompanyService, CompanyAuthGuard],
 })
 export class CompanyModule {}

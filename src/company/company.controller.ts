@@ -1,8 +1,21 @@
-import { Body, Controller, Post, Res } from '@nestjs/common';
-import type { Response } from 'express';
+import {
+  Body,
+  Controller,
+  Patch,
+  Post,
+  Req,
+  Res,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import type { Request, Response } from 'express';
 import { CompanyService } from './company.service.js';
 import { RegisterCompanyDto } from './dto/register-company.dto.js';
 import { LoginCompanyDto } from './dto/login-company.dto.js';
+import { CompanyAuthGuard } from '../auth/guards/company-auth.guard.js';
+import { storage } from '../helper/cloudinary.helper.js';
 
 @Controller('company')
 export class CompanyController {
@@ -19,5 +32,16 @@ export class CompanyController {
     @Res({ passthrough: true }) res: Response,
   ) {
     return this.companyService.loginPost(loginDto, res);
+  }
+
+  @Patch('profile')
+  @UseGuards(CompanyAuthGuard)
+  @UseInterceptors(FileInterceptor('logo', { storage }))
+  async profilePatch(
+    @Req() req: Request,
+    @UploadedFile() file: Express.Multer.File | undefined,
+    @Body() body: any,
+  ) {
+    return this.companyService.profilePatch(req, file, body);
   }
 }

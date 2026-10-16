@@ -102,4 +102,28 @@ export class CompanyService {
       message: 'Đăng nhập thành công !',
     };
   }
+
+  async profilePatch(
+    req: any,
+    file: Express.Multer.File | undefined,
+    body: any,
+  ) {
+    if (file && (file as any).path) {
+      body.logo = (file as any).path;
+    } else {
+      delete body.logo;
+    }
+
+    await this.accountCompanyModel.updateOne(
+      {
+        _id: req.account.id,
+      },
+      body,
+    );
+
+    return {
+      code: 'success',
+      message: 'Cập nhật thành công!',
+    };
+  }
 }
