@@ -6,10 +6,11 @@ import {
   Req,
   Res,
   UploadedFile,
+  UploadedFiles,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import type { Request, Response } from 'express';
 import { CompanyService } from './company.service.js';
 import { RegisterCompanyDto } from './dto/register-company.dto.js';
@@ -43,5 +44,16 @@ export class CompanyController {
     @Body() body: any,
   ) {
     return this.companyService.profilePatch(req, file, body);
+  }
+
+  @Post('job/create')
+  @UseGuards(CompanyAuthGuard)
+  @UseInterceptors(FilesInterceptor('images', 8, { storage }))
+  async jobCreate(
+    @Req() req: Request,
+    @UploadedFiles() files: Express.Multer.File[] | undefined,
+    @Body() body: any,
+  ) {
+    return this.companyService.jobCreate(req, files, body);
   }
 }

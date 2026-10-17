@@ -9,6 +9,7 @@ import {
   AccountCompany,
   AccountCompanyDocument,
 } from './schemas/account-company.schema.js';
+import { Job, JobDocument } from '../job/schemas/job.schema.js';
 import { RegisterCompanyDto } from './dto/register-company.dto.js';
 import { LoginCompanyDto } from './dto/login-company.dto.js';
 
@@ -17,6 +18,8 @@ export class CompanyService {
   constructor(
     @InjectModel(AccountCompany.name)
     private readonly accountCompanyModel: Model<AccountCompanyDocument>,
+    @InjectModel(Job.name)
+    private readonly jobCompanyModel: Model<JobDocument>,
     private readonly configService: ConfigService,
   ) {}
 
@@ -124,6 +127,39 @@ export class CompanyService {
     return {
       code: 'success',
       message: 'Cập nhật thành công!',
+    };
+  }
+
+  async jobCreate(
+    req: any,
+    files: Express.Multer.File[] | undefined,
+    body: any,
+  ) {
+    body.companyId = req.account.id;
+    body.salaryMin = body.salaryMin ? parseInt(body.salaryMin) : 0;
+    body.salaryMax = body.salaryMax ? parseInt(body.salaryMax) : 0;
+    body.technologies = body.technologies
+      ? typeof body.technologies === 'string'
+        ? body.technologies.split(', ')
+        : body.technologies
+      : [];
+    body.images = [];
+
+    // Xử lý mảng images
+    if (files && Array.isArray(files)) {
+      for (const file of files) {
+        if ((file as any).path) {
+          body.images.push((file as any).path);
+        }
+      }
+    }
+
+    const newRecord = new this.jobCompanyModel(body);
+    await newRecord.save();
+
+    return {
+      code: 'success',
+      message: 'Tạo công việc thành công!',
     };
   }
 }
