@@ -10,6 +10,7 @@ import {
   AccountCompanyDocument,
 } from './schemas/account-company.schema.js';
 import { Job, JobDocument } from '../job/schemas/job.schema.js';
+import { City, CityDocument } from '../city/schemas/city.schema.js';
 import { RegisterCompanyDto } from './dto/register-company.dto.js';
 import { LoginCompanyDto } from './dto/login-company.dto.js';
 
@@ -20,6 +21,8 @@ export class CompanyService {
     private readonly accountCompanyModel: Model<AccountCompanyDocument>,
     @InjectModel(Job.name)
     private readonly jobCompanyModel: Model<JobDocument>,
+    @InjectModel(City.name)
+    private readonly cityModel: Model<CityDocument>,
     private readonly configService: ConfigService,
   ) {}
 
@@ -160,6 +163,43 @@ export class CompanyService {
     return {
       code: 'success',
       message: 'Tạo công việc thành công!',
+    };
+  }
+
+  async jobList(req: any) {
+    const jobs = await this.jobCompanyModel
+      .find({
+        companyId: req.account.id,
+      })
+      .sort({
+        createdAt: 'desc',
+      });
+
+    const dataFinal = [];
+
+    const city = await this.cityModel.findOne({
+      _id: req.account.city,
+    });
+
+    for (const item of jobs) {
+      dataFinal.push({
+        id: item.id,
+        companyLogo: req.account.logo,
+        title: item.title,
+        companyName: req.account.companyName,
+        salaryMin: item.salaryMin,
+        salaryMax: item.salaryMax,
+        position: item.position,
+        workingForm: item.workingForm,
+        companyCity: city?.name,
+        technologies: item.technologies,
+      });
+    }
+
+    return {
+      code: 'success',
+      message: 'Lấy danh sách công việc thành công!',
+      jobs: dataFinal,
     };
   }
 }

@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   Patch,
   Post,
   Req,
@@ -55,5 +56,11 @@ export class CompanyController {
     @Body() body: any,
   ) {
     return this.companyService.jobCreate(req, files, body);
+  }
+
+  @Get('job/list')
+  @UseGuards(CompanyAuthGuard)
+  async jobList(@Req() req: Request) {
+    return this.companyService.jobList(req);
   }
 }
