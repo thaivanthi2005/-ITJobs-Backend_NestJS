@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Patch,
   Post,
   Req,
@@ -62,5 +63,23 @@ export class CompanyController {
   @UseGuards(CompanyAuthGuard)
   async jobList(@Req() req: Request) {
     return this.companyService.jobList(req);
+  }
+
+  @Get('job/edit/:id')
+  @UseGuards(CompanyAuthGuard)
+  async editJob(@Req() req: Request, @Param('id') id: string) {
+    return this.companyService.editJob(req, id);
+  }
+
+  @Patch('job/edit/:id')
+  @UseGuards(CompanyAuthGuard)
+  @UseInterceptors(FilesInterceptor('images', 8, { storage }))
+  async editJobPatch(
+    @Req() req: Request,
+    @Param('id') id: string,
+    @UploadedFiles() files: Express.Multer.File[] | undefined,
+    @Body() body: any,
+  ) {
+    return this.companyService.editJobPatch(req, id, files, body);
   }
 }

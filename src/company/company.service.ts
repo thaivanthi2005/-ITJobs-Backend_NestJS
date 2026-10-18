@@ -170,7 +170,7 @@ export class CompanyService {
     const find = {
       companyId: req.account.id,
     };
-    const limitItems = 2;
+    const limitItems = 3;
     let page = 1;
     if (req.query?.page) {
       const currentPage = parseInt(`${req.query.page}`);
@@ -219,5 +219,89 @@ export class CompanyService {
       jobs: dataFinal,
       totalPage: totalPage,
     };
+  }
+
+  async editJob(req: any, id: string) {
+    try {
+      const jobDetail = await this.jobCompanyModel.findOne({
+        _id: id,
+        companyId: req.account.id,
+      });
+
+      if (!jobDetail) {
+        return {
+          code: 'error',
+          message: 'Id không hợp lệ!',
+        };
+      }
+
+      return {
+        code: 'success',
+        message: 'Thành công!',
+        jobDetail: jobDetail,
+      };
+    } catch {
+      return {
+        code: 'error',
+        message: 'Id không hợp lệ!',
+      };
+    }
+  }
+
+  async editJobPatch(
+    req: any,
+    id: string,
+    files: Express.Multer.File[] | undefined,
+    body: any,
+  ) {
+    try {
+      const jobDetail = await this.jobCompanyModel.findOne({
+        _id: id,
+        companyId: req.account.id,
+      });
+
+      if (!jobDetail) {
+        return {
+          code: 'error',
+          message: 'Id không hợp lệ!',
+        };
+      }
+
+      body.salaryMin = body.salaryMin ? parseInt(body.salaryMin) : 0;
+      body.salaryMax = body.salaryMax ? parseInt(body.salaryMax) : 0;
+      body.technologies = body.technologies
+        ? typeof body.technologies === 'string'
+          ? body.technologies.split(', ')
+          : body.technologies
+        : [];
+      body.images = [];
+
+      // Xử lý mảng images
+      if (files && Array.isArray(files)) {
+        for (const file of files) {
+          if ((file as any).path) {
+            body.images.push((file as any).path);
+          }
+        }
+      }
+
+      await this.jobCompanyModel.updateOne(
+        {
+          _id: id,
+          companyId: req.account.id,
+        },
+        body,
+      );
+
+      return {
+        code: 'success',
+        message: 'Cập nhật thành công!',
+      };
+    } catch {
+      return {
+        code: 'error',
+        message: 'Id không hợp lệ!',
+      };
+    }
   }
 }
