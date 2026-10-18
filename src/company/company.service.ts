@@ -167,13 +167,30 @@ export class CompanyService {
   }
 
   async jobList(req: any) {
+    const find = {
+      companyId: req.account.id,
+    };
+    const limitItems = 2;
+    let page = 1;
+    if (req.query?.page) {
+      const currentPage = parseInt(`${req.query.page}`);
+      if (currentPage > 0) {
+        page = currentPage;
+      }
+    }
+    const totalRecord = await this.jobCompanyModel.countDocuments(find);
+    const totalPage = Math.ceil(totalRecord / limitItems);
+    if (page > totalPage && totalPage !== 0) {
+      page = totalPage;
+    }
+    const skip = (page - 1) * limitItems;
     const jobs = await this.jobCompanyModel
-      .find({
-        companyId: req.account.id,
-      })
+      .find(find)
       .sort({
         createdAt: 'desc',
-      });
+      })
+      .limit(limitItems)
+      .skip(skip);
 
     const dataFinal = [];
 
@@ -200,6 +217,7 @@ export class CompanyService {
       code: 'success',
       message: 'Lấy danh sách công việc thành công!',
       jobs: dataFinal,
+      totalPage: totalPage,
     };
   }
 }
