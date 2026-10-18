@@ -57,6 +57,15 @@ export class SearchService {
         find.companyId = accountCompany?.id;
       }
 
+      // keyword
+      if (query.keyword) {
+        const keywordRegex = new RegExp(`${query.keyword}`, 'i');
+        find['$or'] = [
+          { title: keywordRegex },
+          { technologies: keywordRegex },
+        ];
+      }
+
       const jobs = await this.jobModel.find(find).sort({ createdAt: 'desc' });
 
       for (const item of jobs) {
