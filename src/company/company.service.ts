@@ -335,4 +335,42 @@ export class CompanyService {
       };
     }
   }
+
+  async list() {
+    const limitItems = 12;
+
+    const companyList = await this.accountCompanyModel
+      .find({})
+      .limit(limitItems)
+      .sort({
+        createdAt: 'desc',
+      });
+
+    const companyListFinal = [];
+
+    for (const item of companyList) {
+      const dataItemFinal = {
+        id: item.id,
+        logo: item.logo,
+        companyName: item.companyName,
+        cityName: '',
+        totalJob: 0,
+      };
+      const city = await this.cityModel.findOne({ _id: item.city });
+      dataItemFinal.cityName = city?.name ? `${city.name}` : '';
+
+      const totalJob = await this.jobCompanyModel.countDocuments({
+        companyId: item.id,
+      });
+      dataItemFinal.totalJob = totalJob;
+
+      companyListFinal.push(dataItemFinal);
+    }
+
+    return {
+      code: 'success',
+      message: 'Thành công!',
+      companyList: companyListFinal,
+    };
+  }
 }
