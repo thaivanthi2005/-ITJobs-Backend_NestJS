@@ -7,6 +7,7 @@ import { UserModule } from './user/user.module.js';
 import { AuthModule } from './auth/auth.module.js';
 import { CompanyModule } from './company/company.module.js';
 import { CityModule } from './city/city.module.js';
+import { SearchModule } from './search/search.module.js';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { CityModule } from './city/city.module.js';
     AuthModule,
     CompanyModule,
     CityModule,
+    SearchModule,
   ],
   controllers: [AppController],
   providers: [AppService],
