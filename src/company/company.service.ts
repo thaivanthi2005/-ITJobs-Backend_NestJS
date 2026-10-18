@@ -304,4 +304,35 @@ export class CompanyService {
       };
     }
   }
+
+  async deleteJobDel(req: any, id: string) {
+    try {
+      const jobDetail = await this.jobCompanyModel.findOne({
+        _id: id,
+        companyId: req.account.id,
+      });
+
+      if (!jobDetail) {
+        return {
+          code: 'error',
+          message: 'Id không hợp lệ!',
+        };
+      }
+
+      await this.jobCompanyModel.deleteOne({
+        _id: id,
+        companyId: req.account.id,
+      });
+
+      return {
+        code: 'success',
+        message: 'Đã xóa!',
+      };
+    } catch {
+      return {
+        code: 'error',
+        message: 'Id không hợp lệ!',
+      };
+    }
+  }
 }

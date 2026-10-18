@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -81,5 +82,11 @@ export class CompanyController {
     @Body() body: any,
   ) {
     return this.companyService.editJobPatch(req, id, files, body);
+  }
+
+  @Delete('job/delete/:id')
+  @UseGuards(CompanyAuthGuard)
+  async deleteJobDel(@Req() req: Request, @Param('id') id: string) {
+    return this.companyService.deleteJobDel(req, id);
   }
 }
