@@ -48,6 +48,15 @@ export class SearchService {
         }
       }
 
+      // company
+      if (query.company) {
+        const accountCompany = await this.accountCompanyModel.findOne({
+          companyName: query.company as string,
+        });
+
+        find.companyId = accountCompany?.id;
+      }
+
       const jobs = await this.jobModel.find(find).sort({ createdAt: 'desc' });
 
       for (const item of jobs) {
