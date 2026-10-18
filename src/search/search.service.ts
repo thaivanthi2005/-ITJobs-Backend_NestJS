@@ -24,8 +24,28 @@ export class SearchService {
     if (Object.keys(query).length > 0) {
       const find: any = {};
 
+      // language
       if (query.language) {
         find.technologies = query.language;
+      }
+
+      // City
+      if (query.city) {
+        const city = await this.cityModel.findOne({
+          name: query.city as string,
+        });
+
+        if (city) {
+          const listAccountCompanyInCity = await this.accountCompanyModel.find({
+            city: city.id,
+          });
+
+          const listIdAccountCompany = listAccountCompanyInCity.map(
+            (item) => item.id,
+          );
+
+          find.companyId = { $in: listIdAccountCompany };
+        }
       }
 
       const jobs = await this.jobModel.find(find).sort({ createdAt: 'desc' });
