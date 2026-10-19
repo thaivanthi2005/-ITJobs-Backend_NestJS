@@ -66,6 +66,11 @@ export class SearchService {
         ];
       }
 
+      // position
+      if (query.position) {
+        find.position = query.position;
+      }
+
       const jobs = await this.jobModel.find(find).sort({ createdAt: 'desc' });
 
       for (const item of jobs) {
