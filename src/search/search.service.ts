@@ -71,6 +71,11 @@ export class SearchService {
         find.position = query.position;
       }
 
+      // workingForm
+      if (query.workingForm) {
+        find.workingForm = query.workingForm;
+      }
+
       const jobs = await this.jobModel.find(find).sort({ createdAt: 'desc' });
 
       for (const item of jobs) {
